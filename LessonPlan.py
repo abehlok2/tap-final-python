@@ -1,6 +1,4 @@
 import os
-
-import lessonplan_docx
 from langchain.chains import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import (
@@ -8,30 +6,27 @@ from langchain.prompts import (
     HumanMessagePromptTemplate,
 )
 from langchain.schema import SystemMessage
-
 from prompts.lp_prompt import lp_prompt
 from prompts.lp_system_msg import lp_system_msg
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 gpt4 = ChatOpenAI(
-    openai_api_key = openai_api_key,
-    temperature = 0.5,
-    streaming = True, 
+    openai_api_key=openai_api_key,
+    temperature=0.5,
+    streaming=True, 
 )
-    
+
 
 class LessonPlan:
     """
     This class represents a Lesson Plan that uses LangChain's LLMChain to generate 
     and modify lesson plans.
     """
-    
     lp_system_msg = lp_system_msg
 
     lp_chat_prompt = ChatPromptTemplate.from_messages([lp_system_msg, lp_prompt])
 
-    
     def __init__(self,
                  subject,
                  topic,
@@ -65,7 +60,6 @@ class LessonPlan:
             additional_details=self.additional_details)
         return lp
 
-
     def modify_lesson_plan(self, memory, mods: str):
         """Modify a lesson plan to meet user-requested changes"""
         mod_sys_msg = SystemMessage(content="""
@@ -81,8 +75,8 @@ class LessonPlan:
         mod_prompt_template = HumanMessagePromptTemplate.from_template(
             template=human_mod_prompt, input_variables=input_variables)
 
-        mod_chat_prompt = ChatPromptTemplate.from_messages([mod_sys_msg, \
-                                                                mod_prompt_template])
+        mod_chat_prompt = ChatPromptTemplate.from_messages([mod_sys_msg,
+                                                            mod_prompt_template])
         mod_chain = LLMChain(
             llm=gpt4,
             prompt=mod_chat_prompt,
@@ -92,9 +86,10 @@ class LessonPlan:
         modified_lp = mod_chain.run(mods)
         return modified_lp
 
+    @staticmethod
     def save_lessonplan(self, lessonplan, path):
         """Save a lesson plan to a lessonplan_docx file"""
-        lessonplan_doc = lessonplan_docx.Document()
+        lessonplan_doc = lessonplan.Document()
         lessonplan_doc.add_heading(lessonplan.subject, 0)
         lessonplan_doc.add_heading(lessonplan.topic, 1)
         lessonplan_doc.add_heading(lessonplan.learning_objective, 2)

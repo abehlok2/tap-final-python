@@ -1,4 +1,3 @@
-
 from typing import List
 import os
 from langchain.chains import LLMChain, LLMCheckerChain
@@ -7,28 +6,26 @@ from prompts.frq_gen_prompt import frq_chat_prompt
 from prompts.mrq_gen_prompt import mrq_chat_prompt
 import docx
 
-
 openai_api_key = os.environ.get("OPENAI_API_KEY")
-
 gpt3 = ChatOpenAI(
-    openai_api_key = openai_api_key,
-    model = "gpt-3.5-turbo-16k",
-    temperature = 0.5,
-    presence_penalty = 0.75,
-    frequency_penalty = 0.5
+    openai_api_key=openai_api_key,
+    model="gpt-3.5-turbo-16k",
+    temperature=0.5,
+    presence_penalty=0.75,
+    frequency_penalty=0.5
 )
 
 gpt4 = ChatOpenAI(
-    openai_api_key = openai_api_key,
-    model = "gpt-4",
-    temperature = 0.5,
-    presence_penalty = 0.75,
-    frequency_penalty = 0.5
+    openai_api_key=openai_api_key,
+    model="gpt-4",
+    temperature=0.5,
+    presence_penalty=0.75,
+    frequency_penalty=0.5
 )
 
 
 class FrqQuestion:
-    def __init__(self, numq, subject, topic, difficulty):
+    def __init__(self, numq: object, subject: object, topic: object, difficulty: object) -> object:
         self.numq = numq
         self.subject = subject
         self.topic = topic
@@ -83,7 +80,8 @@ class FrqQuestion:
 
 class MrqQuestion(FrqQuestion):
     """Class that can be used to generate multiple-choice questions for 4th grade elementary students"""
-    def __init__(self, numq:int, subject:str, topic:str, difficulty:str, num_choices:int = 4):
+
+    def __init__(self, numq: int, subject: str, topic: str, difficulty: str, num_choices: int = 4):
         # call the parent class's __init__ method with the same arguments
         super().__init__(numq, subject, topic, difficulty)
         # add a new attribute for the number of choices
@@ -101,7 +99,7 @@ class MrqQuestion(FrqQuestion):
                 difficulty=self.difficulty,
                 subject=self.subject,
                 topic=self.topic,
-                num_choices=self.num_choices # pass the number of choices as an argument
+                num_choices=self.num_choices  # pass the number of choices as an argument
             )
             yield question
 
@@ -109,6 +107,7 @@ class MrqQuestion(FrqQuestion):
         return list(self)
 
         # override the check_questions method to check both the question and the answer
+
     def check_questions(self, questions: List[str]):
         try:
             question_checker_chain = LLMCheckerChain.from_llm(llm=gpt3)
@@ -130,12 +129,11 @@ class MrqQuestion(FrqQuestion):
             return []
 
 
-testquestion = MrqQuestion(
+test_question = MrqQuestion(
     numq=2,
     subject="Math",
     topic="Addition",
     difficulty="Easy",
     num_choices=4
 )
-
-
+print(test_question)
